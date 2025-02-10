@@ -1,8 +1,0 @@
-NEXT_TOKEN=$(jq -r '.NextToken' quickconnects_stg.json)
-
-while [ "$NEXT_TOKEN" != "null" ] && [ -n "$NEXT_TOKEN" ]; do
-    sleep 2  # 지연 추가 (2초)
-    aws connect search-quick-connects --instance-id 7c031296-baf2-4146-b0b7-d3e6e01797fd --query "QuickConnects[?QuickConnectConfig.QuickConnectType=='USER'].{Id:QuickConnectId, Name:Name, QuickConnectType:QuickConnectConfig.QuickConnectType, UserId:QuickConnectConfig.UserConfig.UserId, ContactFlowId:QuickConnectConfig.UserConfig.ContactFlowId}" --max-results 100 --starting-token "$NEXT_TOKEN" --output json >> quickconnects_stg.json
-
-    NEXT_TOKEN=$(jq -r '.NextToken' quickconnects_stg.json | tail -n 1)
-done
